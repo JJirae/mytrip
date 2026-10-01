@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1f2a44">
+<title>우리 여행</title>
+<style>
+:root{
+  --bg:#f5f2ec; --card:#fff; --ink:#1c1e23; --muted:#5f636c; --line:#e5dfd4;
+  --navy:#1f2a44; --navy-ink:#f3f1ec; --chip:#efe9df; --ok:#2e7a55; --ok-soft:#e1f2e8;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131519; --card:#1c1f26; --ink:#ecebe7; --muted:#a3a9b3; --line:#2b2f38;
+    --navy:#0e1220; --navy-ink:#ecebe7; --chip:#262a33; --ok:#6fd0a0; --ok-soft:#18342a;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+header{background:var(--navy);color:var(--navy-ink);padding:calc(env(safe-area-inset-top) + 40px) 0 28px}
+header h1{margin:0;font-size:30px;line-height:1.25;font-weight:900;word-break:keep-all}
+header p{margin:6px 0 0;font-size:16px;opacity:.8}
+main{padding-bottom:calc(32px + env(safe-area-inset-bottom))}
+h2{margin:28px 0 10px;font-size:16px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.trip{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:18px 16px 18px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;color:inherit;text-decoration:none;overflow:hidden}
+.trip:active{transform:scale(.99)}
+.trip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bar{align-self:stretch;flex:none;width:6px;margin:-18px 0;background:var(--accent)}
+.body{flex:1;min-width:0}
+.kicker{font-size:14px;color:var(--muted)}
+.trip h3{margin:2px 0 4px;font-size:22px;line-height:1.3;font-weight:800;word-break:keep-all}
+.dates{font-size:16px;font-weight:700}
+.sub{margin-top:2px;font-size:15px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.status{flex:none;padding:6px 12px;border-radius:999px;background:var(--chip);font-size:15px;font-weight:800;white-space:nowrap}
+.status.soon{background:var(--accent);color:#fff}
+.status.now{background:var(--ok-soft);color:var(--ok)}
+.trip.past .body{opacity:.75}
+.empty{margin:28px 0;padding:24px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1 id="title"></h1><p id="subtitle"></p></div></header>
+<main class="wrap" id="list"></main>
+<script type="application/json" id="site">{"site": {"title": "우리 여행", "subtitle": "여행 일정표 모음"}, "trips": [{"path": "gyeongju-2026-10/", "title": "경주 커플 여행", "kicker": "2026 가을 · 3박 4일", "start": "2026-10-03", "end": "2026-10-06", "accent": "#c4442a", "destination": "경주 (시내 · 양남 · 감포 · 보문)", "who": "본인 · 연인"}]}</script>
+<script>
+(function () {
+  var S = JSON.parse(document.getElementById('site').textContent);
+  var site = S.site || {}, trips = S.trips || [];
+  var W = '일월화수목금토', DAY = 864e5;
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function day(s) { var p = String(s || '').split('-'); return p.length === 3 ? new Date(+p[0], p[1] - 1, +p[2]) : null; }
+  var now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  function fmt(d) { return (d.getFullYear() !== today.getFullYear() ? d.getFullYear() + '. ' : '') + (d.getMonth() + 1) + '/' + d.getDate() + '(' + W[d.getDay()] + ')'; }
+  function gap(a, b) { return Math.round((a - b) / DAY); }
+
+  document.getElementById('title').textContent = site.title || '여행';
+  document.getElementById('subtitle').textContent = site.subtitle || ('일정표 ' + trips.length + '개');
+
+  var soon = [], past = [];
+  trips.forEach(function (t) {
+    t.s = day(t.start); t.e = day(t.end) || t.s;
+    if (!t.s) return;
+    (t.e < today ? past : soon).push(t);
+  });
+  soon.sort(function (a, b) { return a.s - b.s; });
+  past.sort(function (a, b) { return b.s - a.s; });
+
+  function card(t) {
+    var st;
+    if (t.e < today) st = '<span class="status">다녀옴</span>';
+    else if (t.s <= today) st = '<span class="status now">여행 중 · ' + (gap(today, t.s) + 1) + '일차</span>';
+    else { var n = gap(t.s, today); st = '<span class="status soon">' + (n === 1 ? '내일' : 'D-' + n) + '</span>'; }
+    var accent = /^#[0-9a-f]{3,8}$/i.test(t.accent || '') ? t.accent : '#c4442a';
+    var sub = [t.destination, t.who].filter(Boolean).join(' · ');
+    return '<a class="trip' + (t.e < today ? ' past' : '') + '" href="' + esc(encodeURI(t.path)) + '" style="--accent:' + accent + '">' +
+      '<span class="bar"></span><div class="body">' +
+      (t.kicker ? '<div class="kicker">' + esc(t.kicker) + '</div>' : '') +
+      '<h3>' + esc(t.title) + '</h3>' +
+      '<div class="dates">' + fmt(t.s) + (t.e - t.s ? ' ~ ' + fmt(t.e) : '') + '</div>' +
+      (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') +
+      '</div>' + st + '</a>';
+  }
+
+  var h = '';
+  if (soon.length) h += '<h2>다가오는 여행</h2>' + soon.map(card).join('');
+  if (past.length) h += '<h2>지난 여행</h2>' + past.map(card).join('');
+  document.getElementById('list').innerHTML = h || '<p class="empty">아직 만든 여행이 없어요</p>';
+})();
+</script>
+</body>
+</html>

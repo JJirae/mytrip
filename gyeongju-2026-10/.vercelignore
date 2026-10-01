@@ -1,5 +1,6 @@
-# 작업 기록·원본 서류는 배포하지 않음
+# 작업 기록·원본 서류·공유 파일은 배포하지 않음
 .omc
 trip.json
 PRODUCT.md
+share
 assets/*.pdf

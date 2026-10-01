@@ -22,6 +22,13 @@ Claude Code를 다시 열면 스킬 목록에 `trip-planner`가 보입니다.
 - 웹 앱 파일(index.html 등) — 원하면 Vercel 배포
 - 예시: `examples/osaka-sample/`
 
+## 여러 여행을 주소 하나로 (사이트 모드)
+저장소 맨 위에 `site.json`(`{ "title": "우리 여행" }`)을 두고 여행 폴더를 그 아래에 만들면,
+`build.py`가 메인 페이지(`index.html`, 여행 목록)와 `vercel.json`·`.vercelignore`를 함께 만듭니다.
+Vercel 프로젝트는 하나만 두고 Root Directory를 비워 두면, 여행을 추가해도 `git push`만 하면 됩니다.
+- 메인: `https://<주소>/` · 여행: `https://<주소>/<여행-id>/`
+- 메인 페이지만 다시 만들기: `python3 scripts/build_home.py <사이트폴더>`
+
 ## 필요한 것
 - Python 3 (앱 생성 스크립트 `scripts/build.py`)
 - Node.js 18+ 와 크롬(선택) — `scripts/verify.mjs` 화면 자동 점검용

@@ -19,11 +19,23 @@ argument-hint: "[아는 내용 자유롭게 — 예: 제주 3박4일 부모님�
 ├── SKILL.md                     ← 지금 문서(절차)
 ├── references/planning-rules.md ← 동행·국내/해외·이동수단별 기획 규칙  (1단계 시작 전에 읽기)
 ├── references/trip-schema.md    ← trip.json 형식                      (4단계 전에 읽기)
-├── scripts/build.py             ← 검증 + 웹 앱 + 가족 공유 파일 생성
+├── scripts/build.py             ← 검증 + 웹 앱 + 가족 공유 파일 생성 (사이트면 메인 페이지도 갱신)
+├── scripts/build_home.py        ← 여러 여행을 묶는 메인 페이지(여행 목록) 생성
 ├── scripts/verify.mjs           ← 헤드리스 크롬으로 모든 탭·공유 파일 점검
 ├── examples/osaka-sample/       ← 모든 탭을 쓰는 예시 trip.json + assets  (4단계 전에 열어 보기)
-└── template/                    ← index.html · sw.js · vercel.json ...
+└── template/                    ← index.html · sw.js · vercel.json · home.html · site-* ...
 ```
+
+**사이트 모드 (여러 여행을 주소 하나로):** 폴더에 `site.json`이 있으면 그 폴더가 사이트다.
+```
+<사이트폴더>/                 ← git 저장소 · Vercel Root Directory는 비워 둠(저장소 맨 위)
+├── site.json                 ← { "title": "우리 여행", "subtitle": "..." }
+├── index.html                ← 메인 페이지(여행 목록) — build_home.py가 생성
+├── vercel.json, .vercelignore ← build_home.py가 생성 (스킬 코드·md·trip.json은 배포 안 함)
+├── gyeongju-2026-10/         ← 여행 하나 = 폴더 하나 → https://<주소>/gyeongju-2026-10/
+└── osaka-2026-11/
+```
+여행 폴더에서 `build.py`를 돌리면 메인 페이지가 자동으로 갱신된다. 앱의 경로는 모두 상대경로라 사이트 안(`/<id>/`)에서도, 폴더 단독 배포(`/`)에서도 동작하고, 서비스워커는 여행 폴더 범위로 따로 설치되며 캐시도 여행별로 분리된다.
 
 ---
 
@@ -113,7 +125,7 @@ argument-hint: "[아는 내용 자유롭게 — 예: 제주 3박4일 부모님�
 ## 3단계 · 최종 확인
 정리 표(기본 정보 + 날짜별 한 줄 + 저장 위치)를 보여 주고 `AskUserQuestion`(header `확인`):
 `이대로 만들기 (추천)` / `조금 더 고칠게요`
-- 저장 위치 기본값: 현재 작업 폴더의 상위 폴더 아래 `<여행-id>` (예: `~/projects/gyeongju-2026-11`). 현재 폴더가 이미 다른 여행 앱이면 그 안에 만들지 않는다.
+- 저장 위치 기본값: 현재 폴더(또는 그 상위)에 `site.json`이 있으면 **그 사이트 폴더 바로 아래** `<여행-id>` — 메인 페이지에 자동으로 추가된다. 없으면 현재 작업 폴더의 상위 폴더 아래 `<여행-id>` (예: `~/projects/gyeongju-2026-11`). 현재 폴더가 이미 다른 여행 앱이면 그 안에 만들지 않는다.
 
 **"이대로 만들기" 이후는 질문 없이 끝까지 진행한다.**
 
@@ -139,7 +151,9 @@ node ~/.claude/skills/trip-planner/scripts/verify.mjs <폴더> <스크래치패�
 2. 보내는 법 — "이 파일을 카톡 '나에게 보내기' 또는 가족방에 파일로 보내면, 받은 사람은 파일을 눌러 브라우저로 열면 됩니다. 인터넷 없이도 열려요."
 3. 날짜별 한 줄 요약, "확인 필요/예약 후 입력"으로 남긴 항목
 4. 가족이 할 일 — 티켓 탭에서 입국 QR·티켓 사진 추가 → "사진 포함 파일 보내기"로 다시 공유
-5. 마지막으로 `AskUserQuestion`(header `다음`): `여기까지 (추천)` / `웹 주소로도 배포 (Vercel)` / `git 커밋` — **배포·커밋은 고른 경우에만** 실행한다. 배포하면 `vercel --prod` 결과 주소를 알려 준다.
+5. 마지막으로 `AskUserQuestion`(header `다음`): `여기까지 (추천)` / `웹 주소로도 배포 (Vercel)` / `git 커밋` — **배포·커밋은 고른 경우에만** 실행한다.
+   - 사이트 모드: 커밋 후 `git push`하면 Vercel이 자동으로 다시 배포한다(프로젝트 하나, Root Directory 비움). 새 여행 주소는 `https://<사이트 주소>/<여행-id>/`.
+   - 단독 폴더: 여행 폴더에서 `vercel --prod` 결과 주소를 알려 준다.
 
 ## 수정 요청이 올 때
 trip.json만 고치고 `build.py <폴더>` → `verify.mjs <폴더>`를 다시 실행해 새 공유 파일을 전달한다. index.html이나 share 파일을 직접 고치지 않는다(다시 생성하면 덮어써짐).

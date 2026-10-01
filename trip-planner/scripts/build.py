@@ -255,12 +255,14 @@ def main():
 
     (out / "index.html").write_text(render(t), encoding="utf-8")
 
-    assets = sorted("/" + p.relative_to(out).as_posix() for p in (out / "assets").rglob("*")
+    # 경로는 모두 상대경로 — 사이트 루트(/)에 두든 여행 폴더(/<id>/)에 두든 동작
+    assets = sorted(p.relative_to(out).as_posix() for p in (out / "assets").rglob("*")
                     if p.is_file() and p.suffix.lower() in {".png", ".jpg", ".jpeg", ".webp", ".gif"}) \
         if (out / "assets").exists() else []
-    pre = ["/", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
-           "/icons/apple-touch-icon.png"] + assets
-    version = f"{m['id']}-{dt.datetime.now().strftime('%Y%m%d%H%M%S')}"
+    pre = ["./", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png",
+           "icons/apple-touch-icon.png"] + assets
+    # '@' 앞이 여행 id — sw.js가 같은 여행의 옛 캐시만 지우는 데 씀
+    version = f"{m['id']}@{dt.datetime.now().strftime('%Y%m%d%H%M%S')}"
     sw = (TPL / "sw.js").read_text(encoding="utf-8")
     sw = sw.replace("__VERSION__", version).replace("__PRECACHE__", json.dumps(pre, ensure_ascii=False, indent=2))
     (out / "sw.js").write_text(sw, encoding="utf-8")
@@ -268,12 +270,12 @@ def main():
     manifest = {
         "name": m["title"], "short_name": m.get("short_name") or m["title"][:12],
         "description": f"{m['title']} 일정 · 티켓 · 주소 (오프라인 지원)",
-        "lang": "ko", "id": "/", "start_url": "/", "scope": "/", "display": "standalone",
+        "lang": "ko", "id": "./", "start_url": "./", "scope": "./", "display": "standalone",
         "orientation": "portrait", "background_color": "#1f2a44", "theme_color": "#1f2a44",
         "icons": [
-            {"src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-            {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-            {"src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
+            {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+            {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+            {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
         ],
     }
     (out / "manifest.webmanifest").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -307,6 +309,11 @@ def main():
         print(f"   → 다운로드 폴더에 복사: {copied}")
     if size_mb > 20:
         print("⚠️  20MB가 넘으면 카톡 전송이 느릴 수 있어요. assets 이미지를 줄여 주세요.")
+
+    # 여러 여행을 묶은 사이트(상위 폴더에 site.json)면 메인 페이지도 갱신
+    if (out.parent / "site.json").is_file():
+        import build_home
+        build_home.build(out.parent)
 
 
 if __name__ == "__main__":

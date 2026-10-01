@@ -1,0 +1,10 @@
+# 메인 페이지(index.html)와 여행 폴더의 앱 파일만 배포한다. build_home.py가 만든다.
+.omc
+trip-planner
+*.md
+site.json
+*/trip.json
+*/share
+*/assets/*.pdf
+*/vercel.json
+*/.vercelignore
