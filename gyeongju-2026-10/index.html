@@ -1,0 +1,1210 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1f2a44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>경주 커플 여행</title>
+<style>
+:root{
+  --bg:#f5f2ec; --card:#fff; --ink:#1c1e23; --muted:#5f636c; --line:#e5dfd4;
+  --accent:#c4442a; --accent-ink:#fff; --accent-soft:#fbe8e2;
+  --navy:#1f2a44; --navy-ink:#f3f1ec; --chip:#efe9df;
+  --warn-bg:#fff3d1; --warn-ink:#6e4a00; --ok:#2e7a55; --ok-soft:#e1f2e8;
+  --radius:14px; --tabbar:64px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131519; --card:#1c1f26; --ink:#ecebe7; --muted:#a3a9b3; --line:#2b2f38;
+    --accent-soft:#3a221c; --navy:#0e1220; --navy-ink:#ecebe7; --chip:#262a33;
+    --warn-bg:#3a3017; --warn-ink:#ffd98a; --ok:#6fd0a0; --ok-soft:#18342a;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;padding-bottom:calc(var(--tabbar) + env(safe-area-inset-bottom) + 24px)}
+body.home{padding-bottom:24px}
+a{color:inherit}
+button{font:inherit;color:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:20;background:var(--navy);color:var(--navy-ink);padding-top:env(safe-area-inset-top)}
+.top-row{display:flex;align-items:center;gap:12px;min-height:56px}
+.top h1{flex:1;margin:0;font-size:19px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .home-btn{min-height:44px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.35);background:transparent;color:inherit;font-weight:700}
+body.home .top{display:none}
+
+/* 표지 */
+.cover{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:calc(env(safe-area-inset-top) + 24px) 0 24px}
+.cover-card{background:var(--navy);color:var(--navy-ink);border-radius:20px;padding:28px 22px}
+.cover-card .kicker{margin:0 0 6px;font-size:15px;opacity:.8;letter-spacing:.04em}
+.cover-card h2{margin:0;font-size:32px;line-height:1.25;font-weight:900}
+.cover-card .dates{margin:10px 0 0;font-size:19px;font-weight:700}
+.cover-card .who{margin:6px 0 0;font-size:16px;opacity:.85}
+.big{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:84px;padding:18px 22px;border:0;border-radius:18px;background:var(--card);box-shadow:0 1px 0 var(--line),0 6px 18px rgba(0,0,0,.06);font-size:23px;font-weight:800;text-align:left;cursor:pointer}
+.big small{display:block;font-size:15px;font-weight:600;color:var(--muted);margin-top:2px}
+.big .ico{font-size:34px}
+.big.primary{background:var(--accent);color:var(--accent-ink)}
+.big.primary small{color:inherit;opacity:.85}
+
+/* 공통 */
+.tab{padding:16px 0}
+h2.sec{font-size:21px;margin:8px 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:0 0 12px}
+.card h3{margin:0 0 8px;font-size:19px}
+.lead{color:var(--muted);font-size:16px;margin:0 0 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-weight:700;font-size:16px;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tip{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 12px;font-size:16px;margin:10px 0 0}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0 0;font-size:16px}
+dl.kv dt{color:var(--muted)}
+dl.kv dd{margin:0;font-weight:600}
+.empty{color:var(--muted);text-align:center;padding:32px 0}
+
+/* 날짜 탭 */
+.days{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.days button{flex:0 0 auto;min-width:76px;min-height:60px;border-radius:12px;border:1px solid var(--line);background:var(--card);cursor:pointer;line-height:1.2}
+.days button b{display:block;font-size:19px}
+.days button small{font-size:14px;color:var(--muted)}
+.days button[aria-selected="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+.days button[aria-selected="true"] small{color:inherit;opacity:.8}
+.day-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 12px}
+.day-head h2{margin:0;font-size:22px}
+.wx{font-size:16px;text-decoration:none;color:var(--muted);white-space:nowrap}
+.wx b{color:var(--ink)}
+
+/* 일정 카드 */
+.ev{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin:0 0 10px;overflow:hidden}
+.ev>summary{list-style:none;display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:14px 14px;min-height:64px;cursor:pointer}
+.ev>summary::-webkit-details-marker{display:none}
+.ev-time{font-weight:800;font-size:18px;font-variant-numeric:tabular-nums;line-height:1.15}
+.ev-time small{display:block;font-size:14px;font-weight:600;color:var(--muted)}
+.ev-title{margin:0;font-weight:700;font-size:18px}
+.chev{color:var(--muted);font-size:13px;transition:transform .2s}
+.ev[open] .chev{transform:rotate(180deg)}
+.ev-body{padding:0 14px 16px 90px;font-size:16px}
+.ev-meta{margin:0;color:var(--muted)}
+.ev.now{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.ev.now .ev-time{color:var(--accent)}
+.ev.past{opacity:.6}
+.ev.meal .ev-title .mname{font-weight:600;color:var(--muted);margin-left:6px}
+@media (max-width:380px){.ev-body{padding-left:14px}}
+
+/* 식사 */
+.meal-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.meal-row:first-of-type{border-top:0}
+.meal-row .slot{flex:0 0 auto;min-width:48px;font-weight:800;color:var(--accent)}
+.meal-row .body{flex:1;min-width:0}
+.meal-row .name{font-weight:800}
+.meal-row .menu{color:var(--muted);font-size:16px}
+.ok{display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:0 12px;border-radius:12px;background:var(--chip);font-weight:700;font-size:15px;cursor:pointer;flex:0 0 auto}
+.ok input{width:22px;height:22px;accent-color:var(--ok)}
+.ok:has(input:checked){background:var(--ok-soft);color:var(--ok)}
+
+/* 주소 카드(흰 바탕 유지) */
+.addr-sheet{position:fixed;inset:0;z-index:50;background:#fff;color:#111;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 16px) 20px calc(env(safe-area-inset-bottom) + 16px)}
+.addr-sheet .close{align-self:flex-end;min-height:52px;padding:0 20px;border-radius:12px;border:2px solid #111;background:#fff;color:#111;font-weight:800;font-size:18px}
+.addr-sheet .show{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.addr-sheet .ask{font-size:20px;color:#444;margin:0}
+.addr-sheet .local{font-size:34px;font-weight:900;line-height:1.3;margin:0;word-break:keep-all}
+.addr-sheet .laddr{font-size:24px;font-weight:700;line-height:1.4;margin:0}
+.addr-sheet .ko{font-size:17px;color:#555;margin:0}
+.addr-sheet a.tel{font-size:22px;font-weight:800;color:#111}
+.place{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.place b{font-size:18px}
+.place small{display:block;color:var(--muted);font-size:15px}
+
+/* 체크리스트 */
+.chk{display:flex;align-items:center;gap:12px;min-height:52px;padding:6px 0;border-top:1px solid var(--line);cursor:pointer}
+.chk:first-of-type{border-top:0}
+.chk input{width:24px;height:24px;flex:0 0 auto;accent-color:var(--ok)}
+.chk:has(input:checked) span{color:var(--muted);text-decoration:line-through}
+.subtabs{display:flex;gap:8px;overflow-x:auto;padding:0 0 12px}
+.subtabs button{flex:0 0 auto;min-height:48px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-weight:700;cursor:pointer}
+.subtabs button[aria-selected="true"]{background:var(--navy);color:var(--navy-ink);border-color:var(--navy)}
+
+/* 티켓 사진 */
+.ticket-img{display:block;width:100%;border-radius:10px;margin-top:10px;background:#fff}
+.photo-in{display:none}
+
+/* 하단 탭바 */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar .wrap{display:flex;padding:0}
+.tabbar button{flex:1;min-height:var(--tabbar);border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+.tabbar button i{font-style:normal;font-size:24px}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+body.home .tabbar{display:none}
+
+/* 사진 크게 보기 */
+.viewer{position:fixed;inset:0;z-index:60;background:#000;display:flex;flex-direction:column}
+.viewer .bar{display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top) + 8px) 12px 8px;color:#fff;font-weight:700}
+.viewer .bar button{min-height:48px;padding:0 18px;border-radius:12px;border:1px solid #fff;background:transparent;color:#fff;font-weight:800}
+.viewer .vb{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;background:#fff}
+.viewer img{max-width:100%;max-height:100%}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body class="home">
+<header class="top"><div class="wrap top-row"><h1 id="top-title"></h1><button type="button" class="home-btn" data-go="home">처음으로</button></div></header>
+<main class="wrap" id="app"></main>
+<nav class="tabbar" aria-label="메뉴"><div class="wrap" id="tabbar"></div></nav>
+<div class="addr-sheet" id="addr-sheet" hidden role="dialog" aria-modal="true" aria-label="주소 카드"><button type="button" class="close" data-close-addr>닫기</button><div class="show" id="addr-show"></div></div>
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true"><div class="bar"><span id="viewer-title"></span><button type="button" data-close-viewer>닫기</button></div><div class="vb"><img id="viewer-img" alt=""></div></div>
+
+<!-- TRIP DATA: build.py가 trip.json 내용을 여기에 넣습니다 -->
+<script type="application/json" id="trip">{
+ "intake": {
+  "destination": "경주 (시내 · 양남 · 감포 · 보문)",
+  "region": "domestic",
+  "travelers": [
+   {
+    "name": "본인",
+    "relation": "본인"
+   },
+   {
+    "name": "연인",
+    "relation": "연인"
+   }
+  ],
+  "course": "대릉원·황리단길·첨성대, 양남 주상절리·감포 바다, 경주월드 꼭 10/5, 숙소 근처 스노클링",
+  "transport": [
+   "car"
+  ],
+  "dates": {
+   "start": "2026-10-03",
+   "end": "2026-10-06"
+  },
+  "extra": "서울·수도권 출발 자가용. 숙소 10/3 마도카모텔, 10/4 경주 펜션 바다의 꿈, 10/5 미정(시내 또는 바다). 요청 사항 없음"
+ },
+ "meta": {
+  "id": "gyeongju-2026-10",
+  "title": "경주 커플 여행",
+  "short_name": "경주",
+  "kicker": "2026 가을 · 3박 4일",
+  "start": "2026-10-03",
+  "end": "2026-10-06",
+  "region": "domestic"
+ },
+ "travelers": [
+  {
+   "name": "본인"
+  },
+  {
+   "name": "연인"
+  }
+ ],
+ "transport": [
+  "car"
+ ],
+ "home_buttons": [
+  {
+   "label": "경주월드 이용권",
+   "sub": "10/5 · 사진 등록",
+   "icon": "🎢",
+   "go": "ticket/gjw"
+  },
+  {
+   "label": "주소 · 연락처",
+   "sub": "숙소 · 길안내",
+   "icon": "📍",
+   "go": "info"
+  }
+ ],
+ "days": [
+  {
+   "id": "d1",
+   "date": "2026-10-03",
+   "title": "경주 시내 걷는 날",
+   "weather": {
+    "text": "흐림",
+    "hi": 21,
+    "lo": 15,
+    "url": "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code=4713000000&unit=m%2Fs&hr1=Y"
+   },
+   "note": "개천절 연휴 첫날. 2022년 같은 연휴엔 12~13시 하행 정체가 가장 심했으니 일찍 출발",
+   "events": [
+    {
+     "time": "06:30",
+     "icon": "🚗",
+     "title": "서울 → 경주",
+     "meta": "서울TG→경주 327km · 평소 3시간 40분~4시간",
+     "kv": [
+      [
+       "통행료",
+       "17,000원"
+      ],
+      [
+       "도착",
+       "대릉원 공영주차장"
+      ]
+     ],
+     "tip": "연휴 첫날 정체 예상. 휴게소 1회 쉬기",
+     "map": "대릉원 공영주차장"
+    },
+    {
+     "time": "08:30",
+     "icon": "🍙",
+     "title": "조식",
+     "meal": "조식",
+     "meta": "가는 길 휴게소에서 간단히"
+    },
+    {
+     "time": "11:00",
+     "icon": "🅿️",
+     "title": "대릉원 공영주차장",
+     "meta": "계림로 9",
+     "kv": [
+      [
+       "요금",
+       "2시간 2,000원, 이후 1시간 1,000원"
+      ]
+     ],
+     "tip": "2024년 기준 요금이라 확인 필요. 여기 세워 두고 대릉원·첨성대·황리단길은 걸어서",
+     "map": "대릉원 공영주차장"
+    },
+    {
+     "time": "11:30",
+     "icon": "🍚",
+     "title": "중식",
+     "meal": "중식"
+    },
+    {
+     "time": "12:40",
+     "end": "13:40",
+     "icon": "🏛️",
+     "title": "대릉원",
+     "meta": "09:00~22:00 · 무료 (천마총만 유료)",
+     "map": "경주 대릉원",
+     "nav": false,
+     "links": [
+      {
+       "label": "안내",
+       "url": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=4716&code_uid=1012&area_uid=203&cmd=2"
+      }
+     ]
+    },
+    {
+     "time": "13:40",
+     "icon": "🔭",
+     "title": "첨성대",
+     "meta": "무료 · 연중무휴 · 대릉원에서 도보",
+     "map": "경주 첨성대",
+     "nav": false,
+     "links": [
+      {
+       "label": "안내",
+       "url": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=4716&code_uid=1012&area_uid=47&cmd=2"
+      }
+     ]
+    },
+    {
+     "time": "14:30",
+     "icon": "☕",
+     "title": "황리단길 카페·산책",
+     "tip": "황리단길 공영주차장은 주말 만차가 잦음. 차는 대릉원에 두기",
+     "map": "황리단길",
+     "nav": false
+    },
+    {
+     "time": "16:30",
+     "icon": "🏨",
+     "title": "마도카모텔 체크인",
+     "meta": "원효로 27 · 무료 주차 · 체크아웃 12:00",
+     "tip": "체크인 15시/17시 출처마다 다름. 출발 전 전화 확인",
+     "addr": "madoka",
+     "map": "경주 마도카모텔"
+    },
+    {
+     "time": "18:00",
+     "icon": "🍝",
+     "title": "석식",
+     "meal": "석식"
+    },
+    {
+     "time": "19:30",
+     "icon": "🌙",
+     "title": "동궁과 월지 야경 (선택)",
+     "meta": "09:00~22:00 · 성인 3,000원 · 매표 마감 21:30",
+     "kv": [
+      [
+       "주차",
+       "동궁과월지 주차장 무료"
+      ]
+     ],
+     "map": "동궁과 월지",
+     "links": [
+      {
+       "label": "안내",
+       "url": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=4716&code_uid=1012&area_uid=50&cmd=2"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "d2",
+   "date": "2026-10-04",
+   "title": "양남·감포 바다 보는 날",
+   "weather": {
+    "text": "흐림→구름많음",
+    "hi": 23,
+    "lo": 19,
+    "url": "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code=4713000000&unit=m%2Fs&hr1=Y"
+   },
+   "note": "오전 비 30%. 주상절리 전망대·송대말등대는 월요일 휴관이라 오늘 가기. 스노클링 장비 챙기기",
+   "events": [
+    {
+     "time": "09:30",
+     "icon": "🥐",
+     "title": "조식",
+     "meal": "조식",
+     "meta": "숙소 근처에서 간단히"
+    },
+    {
+     "time": "10:00",
+     "icon": "🚗",
+     "title": "체크아웃 · 양남으로",
+     "meta": "약 45km · 약 46분",
+     "map": "양남 주상절리 전망대"
+    },
+    {
+     "time": "11:00",
+     "end": "12:30",
+     "icon": "🌊",
+     "title": "양남 주상절리·파도소리길",
+     "meta": "전망대 09:00~18:00 · 무료 · 월요일 휴관",
+     "kv": [
+      [
+       "파도소리길",
+       "읍천항↔하서항 1.7km, 편도 약 1시간"
+      ],
+      [
+       "주차",
+       "읍천항·하서항 공영주차장 무료"
+      ]
+     ],
+     "map": "양남 주상절리 전망대",
+     "links": [
+      {
+       "label": "파도소리길",
+       "url": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=40b26a32-ba4e-43e8-a632-ddd265ec4c54"
+      }
+     ]
+    },
+    {
+     "time": "12:40",
+     "icon": "🍜",
+     "title": "중식",
+     "meal": "중식"
+    },
+    {
+     "time": "14:00",
+     "icon": "👑",
+     "title": "문무대왕릉 (봉길해변)",
+     "meta": "주상절리에서 7분 · 주차·입장 무료",
+     "map": "문무대왕릉"
+    },
+    {
+     "time": "14:40",
+     "icon": "🗼",
+     "title": "감포항·송대말등대",
+     "meta": "등대 09:00~18:00 · 무료 · 월요일 휴관 · 점심 12~13시",
+     "kv": [
+      [
+       "주차",
+       "감포항 공영주차장 무료, 등대까지 도보 3~5분"
+      ]
+     ],
+     "map": "송대말등대"
+    },
+    {
+     "time": "15:30",
+     "icon": "🏠",
+     "title": "바다의 꿈 체크인",
+     "meta": "감포읍 척사길 49 · 입실 15:00 / 퇴실 11:00",
+     "addr": "seadream",
+     "map": "경주 감포 바다의 꿈 펜션"
+    },
+    {
+     "time": "16:00",
+     "end": "17:00",
+     "icon": "🤿",
+     "title": "숙소 앞 스노클링",
+     "meta": "업체 없이 직접 · 수온 약 23℃ (10/1 구룡포 관측)",
+     "kv": [
+      [
+       "장비",
+       "마스크·스노클, 구명조끼, 아쿠아슈즈, 래시가드"
+      ],
+      [
+       "마무리",
+       "17시 전 (일몰 18:04)"
+      ]
+     ],
+     "tip": "안전요원 없음. 둘이 함께 구명조끼 입고 들어가기. 파도·너울 있으면 입수 취소",
+     "map": "경주 감포 바다의 꿈 펜션",
+     "nav": false,
+     "links": [
+      {
+       "label": "수온 보기",
+       "url": "https://www.badatime.com/211/sea-temp"
+      }
+     ]
+    },
+    {
+     "time": "18:00",
+     "icon": "🐟",
+     "title": "석식",
+     "meal": "석식"
+    }
+   ]
+  },
+  {
+   "id": "d3",
+   "date": "2026-10-05",
+   "title": "경주월드 가는 날",
+   "weather": {
+    "text": "흐림·비 40%",
+    "hi": 25,
+    "lo": 13,
+    "url": "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code=4713000000&unit=m%2Fs&hr1=Y"
+   },
+   "note": "개천절 대체공휴일이라 붐빔. 비 오면 일부 기구가 멈출 수 있음. 타임라이더는 7월부터 운행 중단(재개 여부 확인)",
+   "events": [
+    {
+     "time": "06:18",
+     "icon": "🌅",
+     "title": "일출 (선택)",
+     "meta": "송대말등대 · 펜션에서 0.7km",
+     "tip": "흐림 예보라 안 보일 수 있음",
+     "map": "송대말등대",
+     "nav": false
+    },
+    {
+     "time": "08:00",
+     "icon": "🍞",
+     "title": "조식",
+     "meal": "조식",
+     "meta": "펜션에서 간단히 (전날 장보기)"
+    },
+    {
+     "time": "09:00",
+     "icon": "🚗",
+     "title": "체크아웃 · 경주월드로",
+     "meta": "감포에서 약 29km · 약 30분",
+     "map": "경주월드"
+    },
+    {
+     "time": "09:40",
+     "icon": "🅿️",
+     "title": "경주월드 주차",
+     "meta": "3·4주차장 무료 · 1·2주차장 카카오T 2,000원",
+     "map": "경주월드",
+     "links": [
+      {
+       "label": "주차 안내",
+       "url": "https://www.gjw.co.kr/Contents/contents.php?cmsNo=DA0900"
+      }
+     ]
+    },
+    {
+     "time": "10:00",
+     "end": "18:30",
+     "icon": "🎢",
+     "title": "경주월드",
+     "meta": "10:00~20:00 · 종일권 대인 54,000원",
+     "tip": "파크 안 QR로 기구 대기시간 확인. 20시 폐장까지 있으면 근처 식당 라스트오더를 놓침",
+     "addr": "gjw",
+     "ticket": "gjw",
+     "map": "경주월드",
+     "nav": false,
+     "links": [
+      {
+       "label": "운영시간",
+       "url": "https://www.gjw.co.kr/Contents/contents.php?cmsNo=DA0200"
+      },
+      {
+       "label": "요금",
+       "url": "https://www.gjw.co.kr/Contents/contents.php?cmsNo=DA0300"
+      }
+     ]
+    },
+    {
+     "time": "12:30",
+     "icon": "🍔",
+     "title": "중식",
+     "meal": "중식",
+     "meta": "파크 안에서"
+    },
+    {
+     "time": "18:30",
+     "icon": "🥩",
+     "title": "석식",
+     "meal": "석식"
+    },
+    {
+     "time": "20:00",
+     "icon": "🏨",
+     "title": "3일차 숙소 체크인",
+     "meta": "미정 · 보문·시내 쪽 권장",
+     "tip": "아직 예약 전. 후보는 정보 탭 '10/5 숙소 후보'"
+    }
+   ]
+  },
+  {
+   "id": "d4",
+   "date": "2026-10-06",
+   "title": "박물관 들렀다 귀가",
+   "weather": {
+    "text": "구름많음",
+    "hi": 23,
+    "lo": 11,
+    "url": "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code=4713000000&unit=m%2Fs&hr1=Y"
+   },
+   "note": "도솔마을·무궁무진·요석궁은 화요일 휴무",
+   "events": [
+    {
+     "time": "09:00",
+     "icon": "☕",
+     "title": "조식",
+     "meal": "조식",
+     "meta": "숙소 근처에서"
+    },
+    {
+     "time": "10:00",
+     "end": "11:30",
+     "icon": "🏺",
+     "title": "국립경주박물관",
+     "meta": "10:00~18:00 · 상설전시 무료 · 화요일 운영",
+     "tip": "주차 요금 확인 필요 (054-740-7500). 대신 불국사도 가능: 입장 마감 17:30, 무료, 주차 2,000원",
+     "map": "국립경주박물관",
+     "links": [
+      {
+       "label": "관람 안내",
+       "url": "https://gyeongju.museum.go.kr/kor/html/sub01/0101.html"
+      }
+     ]
+    },
+    {
+     "time": "11:40",
+     "icon": "🍜",
+     "title": "중식",
+     "meal": "중식"
+    },
+    {
+     "time": "12:30",
+     "icon": "🚗",
+     "title": "경주 → 서울",
+     "meta": "약 338km · 약 4시간 15분 + 휴게소",
+     "kv": [
+      [
+       "통행료",
+       "17,000원"
+      ]
+     ],
+     "tip": "출발 전 주유. 17시 퇴근 정체 전 도착이 목표",
+     "map": "서울"
+    },
+    {
+     "time": "17:00",
+     "icon": "🏡",
+     "title": "서울 도착 (예상)",
+     "nav": false
+    }
+   ]
+  }
+ ],
+ "meals": {
+  "d1": [
+   {
+    "slot": "중식",
+    "name": "이풍녀구로쌈밥",
+    "menu": "구로쌈밥 18,000원",
+    "note": "첨성로 155 · 09:00~20:30 · 연중무휴",
+    "map": "이풍녀구로쌈밥",
+    "url": "https://place.map.kakao.com/8208934",
+    "confirmed": true
+   },
+   {
+    "slot": "중식",
+    "name": "료미",
+    "menu": "고마소바 12,000원 · 스프카레 14,000원",
+    "note": "11~21시 · 브레이크 15~17시 · 현장 웨이팅",
+    "map": "경주 료미",
+    "url": "https://place.map.kakao.com/622705005"
+   },
+   {
+    "slot": "중식",
+    "name": "도솔마을",
+    "menu": "수리산정식 13,000원",
+    "note": "한옥 한정식 · 11~21시 · 화·수 휴무",
+    "map": "경주 도솔마을",
+    "url": "https://place.map.kakao.com/7831539"
+   },
+   {
+    "slot": "석식",
+    "name": "무궁무진",
+    "menu": "생면 파스타 19,000~22,000원 · 스테이크 44,000원",
+    "note": "한옥 · 12~20:30 · 브레이크 15~17시 · 네이버예약",
+    "map": "경주 무궁무진",
+    "url": "https://place.map.kakao.com/99936069",
+    "confirmed": true
+   },
+   {
+    "slot": "석식",
+    "name": "대릉갈비",
+    "menu": "한우 갈비살 100g 9,900원 + 상차림 4,500원",
+    "note": "11:30~21:30 · 웨이팅 있음",
+    "map": "경주 대릉갈비",
+    "url": "https://place.map.kakao.com/1780427160"
+   },
+   {
+    "slot": "석식",
+    "name": "요석궁 1779",
+    "menu": "한정식 코스 (2023년 69,000원/120,000원)",
+    "note": "본관 예약제 · 화 휴무",
+    "map": "요석궁 1779",
+    "url": "https://place.map.kakao.com/8014452"
+   }
+  ],
+  "d2": [
+   {
+    "slot": "중식",
+    "name": "양남해물칼국수",
+    "menu": "해물칼국수 9,000원 · 해물파전 15,000원",
+    "note": "양남 읍천 · 09:00~20:00 · 화 휴무",
+    "map": "양남해물칼국수",
+    "url": "https://www.diningcode.com/profile.php?rid=93MGfpIA8VBA",
+    "confirmed": true
+   },
+   {
+    "slot": "중식",
+    "name": "할매횟집",
+    "menu": "물회 18,000/22,000원 · 회국수 14,000원",
+    "note": "감포 전촌 · 10:00~21:00 (2023년 정보)",
+    "map": "감포 할매횟집",
+    "url": "https://www.diningcode.com/profile.php?rid=qnuhQlHhOZrR"
+   },
+   {
+    "slot": "중식",
+    "name": "총각짬뽕",
+    "menu": "짬뽕 8,000원 · 짜장면 6,000원",
+    "note": "감포 나정 · 10:00~20:00 · 휴무 확인 필요",
+    "map": "감포 총각짬뽕",
+    "url": "https://www.diningcode.com/profile.php?rid=UxJqY9h2u65j"
+   },
+   {
+    "slot": "석식",
+    "name": "갈매기횟집",
+    "menu": "제철 활어회 1인 35,000원",
+    "note": "2층 바다 전망 · 일요일 라스트오더 18:40 (확인 필요) · 화 휴무",
+    "map": "감포 갈매기횟집",
+    "url": "https://www.diningcode.com/profile.php?rid=T4waJzL0tA5R",
+    "confirmed": true
+   },
+   {
+    "slot": "석식",
+    "name": "아라아오삼불고기",
+    "menu": "오삼불고기 15,000원 · 돼지불고기 13,000원",
+    "note": "해산물 아님 · 10:30~21:00 · 월 휴무",
+    "map": "아라아오삼불고기",
+    "url": "https://www.diningcode.com/profile.php?rid=QplLpNoa7KAW"
+   },
+   {
+    "slot": "석식",
+    "name": "대구회센터",
+    "menu": "메뉴·가격 확인 필요",
+    "note": "감포 회단지 · 09:00~22:00 · 054-775-1518",
+    "map": "감포 대구회센터"
+   }
+  ],
+  "d3": [
+   {
+    "slot": "석식",
+    "name": "보문갈비",
+    "menu": "양념 돼지갈비 220g 22,000원",
+    "note": "보문로 529 · 라스트오더 20:30 · 054-771-9399",
+    "map": "경주 보문갈비",
+    "url": "https://www.diningcode.com/profile.php?rid=T0gasTnDeHns",
+    "confirmed": true
+   },
+   {
+    "slot": "석식",
+    "name": "보문한우",
+    "menu": "상차림 1인 6,000원 + 고기 별도",
+    "note": "11:30~21:00 · 054-776-9200",
+    "map": "경주 보문한우"
+   },
+   {
+    "slot": "석식",
+    "name": "맷돌순두부",
+    "menu": "순두부 13,000원",
+    "note": "북군동 · 08:00~21:00 · 목 휴무",
+    "map": "경주 맷돌순두부",
+    "url": "https://www.diningcode.com/profile.php?rid=tahrbOQjkSyT"
+   }
+  ],
+  "d4": [
+   {
+    "slot": "중식",
+    "name": "료미",
+    "menu": "고마소바 12,000원 · 스프카레 14,000원",
+    "note": "황리단길 · 10/1~10/7 매일 영업 · 현장 웨이팅",
+    "map": "경주 료미",
+    "url": "https://place.map.kakao.com/622705005",
+    "confirmed": true
+   },
+   {
+    "slot": "중식",
+    "name": "이풍녀구로쌈밥",
+    "menu": "구로쌈밥 18,000원",
+    "note": "연중무휴",
+    "map": "이풍녀구로쌈밥",
+    "url": "https://place.map.kakao.com/8208934"
+   }
+  ]
+ },
+ "places": {
+  "madoka": {
+   "name": "마도카모텔",
+   "addr_ko": "경북 경주시 원효로 27",
+   "tel": "010-4665-2173",
+   "map": "경주 마도카모텔"
+  },
+  "seadream": {
+   "name": "바다의 꿈 펜션",
+   "addr_ko": "경북 경주시 감포읍 척사길 49",
+   "tel": "1833-6682",
+   "map": "경주 감포 바다의 꿈 펜션"
+  },
+  "gjw": {
+   "name": "경주월드",
+   "addr_ko": "경북 경주시 보문로 544",
+   "map": "경주월드"
+  }
+ },
+ "tickets": [
+  {
+   "id": "gjw",
+   "icon": "🎢",
+   "title": "10/5 경주월드 종일권",
+   "meta": "10:00~20:00 · 대인 54,000원 × 2",
+   "kv": [
+    [
+     "예약번호",
+     "예약 후 입력"
+    ]
+   ]
+  }
+ ],
+ "info": {
+  "contacts": [
+   {
+    "label": "마도카모텔",
+    "tel": "010-4665-2173",
+    "note": "10/3 숙소"
+   },
+   {
+    "label": "바다의 꿈 펜션",
+    "tel": "1833-6682",
+    "note": "10/4 숙소"
+   },
+   {
+    "label": "국립경주박물관",
+    "tel": "054-740-7500",
+    "note": "주차 요금 문의"
+   }
+  ],
+  "sections": [
+   {
+    "title": "🏨 10/5 숙소 후보",
+    "items": [
+     "라한셀렉트 경주(보문) 225,000원~ · 경주월드까지 4분",
+     "이제 경주(불국사 쪽) 232,500원~ · 11분 · 한옥형",
+     "황리단스테이(시내) 282,200원~ · 11분 · 자쿠지",
+     "오르토펜션(양남) 140,000원~ · 41분 · 바다 전망",
+     "웨이브독채오션뷰풀빌라(감포) 270,000원~ · 32분 · 독채",
+     "가격은 10/1 야놀자 2인 1박 최저가"
+    ]
+   },
+   {
+    "title": "🚗 운전·주차 메모",
+    "items": [
+     "서울TG↔경주 통행료 편도 17,000원",
+     "황리단길 공영주차장은 주말 만차가 잦고 유료 전환 여부 확인 필요",
+     "쪽샘지구 임시공영주차장은 2026-02부터 유료 (20분 무료, 하루 최대 1만원)",
+     "동궁과월지·감포항·읍천항 주차장 무료",
+     "경주월드 3·4주차장 무료"
+    ]
+   },
+   {
+    "title": "💰 예산 (2인, 1·2일차 숙박비 제외)",
+    "items": [
+     "식비 약 400,000원",
+     "10/5 숙소 140,000~282,200원",
+     "유류비 약 109,000원 (770km, 12km/L, 1,700원/L 가정)",
+     "경주월드 종일권 108,000원",
+     "통행료 34,000원 · 입장료·주차 약 15,000원",
+     "합계 약 806,000~948,200원"
+    ]
+   }
+  ]
+ },
+ "checklist": {
+  "before": [
+   "10/5 숙소 예약 (보문·시내 쪽 권장)",
+   "경주월드 종일권 온라인 구매 (할인 확인)",
+   "마도카모텔 체크인 시간 확인",
+   "무궁무진 10/3 저녁 네이버예약",
+   "10/2 저녁 기상청 예보·연휴 교통 예보 확인",
+   "경주월드 타임라이더 운행 재개 여부 확인",
+   "차량 점검: 타이어 공기압, 엔진오일, 워셔액",
+   "하이패스 잔액·카드 확인"
+  ],
+  "items": [
+   "신분증",
+   "운전면허증",
+   "휴대폰 충전기",
+   "차량용 충전기·거치대",
+   "상비약",
+   "멀미약 (경주월드)",
+   "🤿 마스크·스노클 (없으면 미리 구매)",
+   "🤿 구명조끼 2개",
+   "🤿 아쿠아슈즈",
+   "🤿 래시가드 또는 웻슈트",
+   "🤿 비치타월·방수팩",
+   "🤿 갈아입을 따뜻한 옷"
+  ],
+  "wear": [
+   "일교차 대비 겉옷 (바람막이·가디건)",
+   "편한 운동화 (파도소리길·대릉원)",
+   "선크림·선글라스"
+  ],
+  "during": [
+   "🤿 10/4 오후 파고 확인 (높으면 스노클링 취소)",
+   "체크아웃 전 충전기 챙기기",
+   "귀가 전 주유"
+  ]
+ }
+}</script>
+<script>
+(function () {
+  'use strict';
+  var T = JSON.parse(document.getElementById('trip').textContent || '{}');
+  var M = T.meta || {};
+  T.meals = T.meals || {};
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+  var store = {
+    get: function (k) { try { return localStorage.getItem('trip:' + (M.id || '') + ':' + k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem('trip:' + (M.id || '') + ':' + k, v); } catch (e) {} }
+  };
+  var WD = ['일', '월', '화', '수', '목', '금', '토'];
+  var DOMESTIC = M.region === 'domestic';
+
+  if (M.accent) document.documentElement.style.setProperty('--accent', M.accent);
+  document.title = M.title || '여행 일정';
+  $('#top-title').textContent = M.title || '';
+
+  function md(dateStr) { var d = new Date(dateStr + 'T00:00:00'); return { m: d.getMonth() + 1, d: d.getDate(), w: WD[d.getDay()] }; }
+  function mapUrl(q) {
+    if (!q) return '';
+    if (/^https?:/.test(q)) return q;
+    return DOMESTIC ? 'https://map.naver.com/p/search/' + encodeURIComponent(q)
+                    : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+  }
+  function navUrl(q) {
+    return DOMESTIC ? 'https://map.kakao.com/link/search/' + encodeURIComponent(q)
+                    : 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(q);
+  }
+  var hasCar = (T.transport || []).indexOf('car') >= 0;
+
+  /* ───── 탭 구성 ───── */
+  var TABS = [
+    { id: 'plan', ico: '🗓️', lb: '일정' },
+    { id: 'meal', ico: '🍽️', lb: '식사', when: function () { return T.meals && Object.keys(T.meals).length; } },
+    { id: 'ticket', ico: '🎫', lb: '티켓', when: function () { return (T.tickets || []).length; } },
+    { id: 'info', ico: '📍', lb: '정보' },
+    { id: 'check', ico: '✅', lb: '준비', when: function () { return T.checklist; } },
+    { id: 'shop', ico: '🛍️', lb: '쇼핑', when: function () { return (T.shop || []).length; } }
+  ].filter(function (t) { return !t.when || t.when(); });
+
+  $('#tabbar').innerHTML = TABS.map(function (t) {
+    return '<button type="button" data-go="' + t.id + '" aria-label="' + t.lb + '"><i aria-hidden="true">' + t.ico + '</i><span>' + t.lb + '</span></button>';
+  }).join('');
+
+  /* ───── 화면 렌더 ───── */
+  function todayId() {
+    var now = new Date(), key = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    var d = (T.days || []).filter(function (x) { return x.date === key; })[0];
+    return d ? d.id : null;
+  }
+
+  function renderHome() {
+    var s = md(M.start), e = md(M.end);
+    var who = (T.travelers || []).map(function (p) { return p.name; }).join(' · ');
+    var tid = todayId();
+    var h = '<section class="cover"><div class="cover-card">' +
+      '<p class="kicker">' + esc(M.kicker || (DOMESTIC ? '국내 여행' : '해외 여행')) + '</p>' +
+      '<h2>' + esc(M.title) + '</h2>' +
+      '<p class="dates">' + s.m + '월 ' + s.d + '일(' + s.w + ') ~ ' + e.m + '월 ' + e.d + '일(' + e.w + ')</p>' +
+      (who ? '<p class="who">' + esc(who) + '</p>' : '') + '</div>';
+    h += '<button type="button" class="big primary" data-go="plan' + (tid ? '/' + tid : '') + '"><span>' + (tid ? '오늘 일정' : '일정 보기') + '<small>시간 · 장소 · 지도</small></span><span class="ico" aria-hidden="true">🗓️</span></button>';
+    if ((T.home_buttons || []).length) {
+      T.home_buttons.forEach(function (b) {
+        h += '<button type="button" class="big" data-go="' + esc(b.go) + '"><span>' + esc(b.label) + (b.sub ? '<small>' + esc(b.sub) + '</small>' : '') + '</span><span class="ico" aria-hidden="true">' + esc(b.icon || '•') + '</span></button>';
+      });
+    } else {
+      if ((T.tickets || []).length) h += '<button type="button" class="big" data-go="ticket"><span>티켓 보기<small>' + (DOMESTIC ? '승차권 · 입장권' : '항공권 · 승차권') + '</small></span><span class="ico" aria-hidden="true">🎫</span></button>';
+      h += '<button type="button" class="big" data-go="info"><span>' + (DOMESTIC ? '주소 · 연락처' : '택시 주소 카드') + '<small>' + (DOMESTIC ? '숙소 · 길안내' : '기사님께 보여주기') + '</small></span><span class="ico" aria-hidden="true">📍</span></button>';
+    }
+    return h + '</section>';
+  }
+
+  function evHtml(ev, day) {
+    var at = ev.time ? day.date + 'T' + ev.time : '';
+    var title = esc((ev.icon ? ev.icon + ' ' : '') + ev.title);
+    var mealName = '';
+    if (ev.meal) {
+      var conf = confirmedMeal(day.id, ev.meal);
+      if (conf) mealName = '<span class="mname">· ' + esc(conf.name) + '</span>';
+    }
+    var body = '';
+    if (ev.meta) body += '<p class="ev-meta">' + esc(ev.meta) + '</p>';
+    if (ev.kv && ev.kv.length) body += '<dl class="kv">' + ev.kv.map(function (p) { return '<dt>' + esc(p[0]) + '</dt><dd>' + esc(p[1]) + '</dd>'; }).join('') + '</dl>';
+    if (ev.tip) body += '<p class="tip">' + esc(ev.tip) + '</p>';
+    var acts = [];
+    if (ev.map) acts.push('<a class="btn" href="' + esc(mapUrl(ev.map)) + '" target="_blank" rel="noopener">지도</a>');
+    if (ev.map && hasCar && ev.nav !== false) acts.push('<a class="btn primary" href="' + esc(navUrl(ev.map)) + '" target="_blank" rel="noopener">길안내</a>');
+    if (ev.addr && T.places && T.places[ev.addr]) acts.push('<button type="button" class="btn" data-addr="' + esc(ev.addr) + '">주소 카드</button>');
+    if (ev.ticket) acts.push('<button type="button" class="btn" data-go="ticket/' + esc(ev.ticket) + '">티켓</button>');
+    if (ev.meal) acts.push('<button type="button" class="btn" data-go="meal/' + esc(day.id) + '">식사 후보</button>');
+    (ev.links || []).forEach(function (l) { acts.push('<a class="btn" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>'); });
+    if (acts.length) body += '<div class="acts">' + acts.join('') + '</div>';
+    return '<details class="ev' + (ev.meal ? ' meal' : '') + '" data-at="' + esc(at) + '" data-end="' + esc(ev.end ? day.date + 'T' + ev.end : '') + '">' +
+      '<summary><div class="ev-time">' + esc(ev.time || '') + (ev.end ? '<small>' + esc(ev.end) + '</small>' : '') + '</div>' +
+      '<div><p class="ev-title">' + title + mealName + '</p></div><span class="chev" aria-hidden="true">▼</span></summary>' +
+      (body ? '<div class="ev-body">' + body + '</div>' : '<div class="ev-body"><p class="ev-meta">자세한 내용 없음</p></div>') + '</details>';
+  }
+
+  function renderPlan(sub) {
+    var days = T.days || [];
+    var cur = days.filter(function (d) { return d.id === sub; })[0] || days.filter(function (d) { return d.id === todayId(); })[0] || days[0];
+    if (!cur) return '<p class="empty">일정이 없습니다</p>';
+    var h = '<nav class="days" role="tablist">' + days.map(function (d) {
+      var x = md(d.date);
+      return '<button type="button" role="tab" data-go="plan/' + d.id + '" aria-selected="' + (d === cur) + '"><b>' + x.m + '/' + x.d + '</b><small>' + x.w + '요일</small></button>';
+    }).join('') + '</nav>';
+    var wx = cur.weather ? '<a class="wx" href="' + esc(cur.weather.url || '#') + '" target="_blank" rel="noopener"><b>' + esc(cur.weather.text || '') + '</b> ' + esc(cur.weather.hi != null ? cur.weather.hi + '°/' + cur.weather.lo + '°' : '') + '</a>' : '';
+    h += '<div class="day-head"><h2>' + esc(cur.title || '') + '</h2>' + wx + '</div>';
+    if (cur.note) h += '<p class="tip" style="margin:0 0 12px">' + esc(cur.note) + '</p>';
+    h += (cur.events || []).map(function (ev) { return evHtml(ev, cur); }).join('');
+    return h;
+  }
+
+  function mealKey(dayId, slot, i) { return 'meal:' + dayId + ':' + slot + ':' + i; }
+  function confirmedMeal(dayId, slot) {
+    var list = (T.meals && T.meals[dayId]) || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].slot === slot && (store.get(mealKey(dayId, slot, i)) === '1' || (list[i].confirmed && store.get(mealKey(dayId, slot, i)) !== '0'))) return list[i];
+    }
+    return null;
+  }
+
+  function renderMeal(sub) {
+    var days = (T.days || []).filter(function (d) { return T.meals[d.id]; });
+    var cur = days.filter(function (d) { return d.id === sub; })[0] || days[0];
+    if (!cur) return '<p class="empty">식사 계획이 없습니다</p>';
+    var h = '<nav class="days" role="tablist">' + days.map(function (d) {
+      var x = md(d.date);
+      return '<button type="button" role="tab" data-go="meal/' + d.id + '" aria-selected="' + (d === cur) + '"><b>' + x.m + '/' + x.d + '</b><small>' + x.w + '요일</small></button>';
+    }).join('') + '</nav>';
+    h += '<p class="lead">"확정"을 누른 식사만 일정표에 이름이 표시됩니다.</p><div class="card">';
+    h += T.meals[cur.id].map(function (m, i) {
+      var k = mealKey(cur.id, m.slot, i);
+      var on = store.get(k) === '1' || (m.confirmed && store.get(k) !== '0');
+      var acts = [];
+      if (m.map) acts.push('<a class="btn" href="' + esc(mapUrl(m.map)) + '" target="_blank" rel="noopener">지도</a>');
+      if (m.url) acts.push('<a class="btn" href="' + esc(m.url) + '" target="_blank" rel="noopener">가게 안내</a>');
+      if (m.addr && T.places && T.places[m.addr]) acts.push('<button type="button" class="btn" data-addr="' + esc(m.addr) + '">주소 카드</button>');
+      return '<div class="meal-row"><span class="slot">' + esc(m.slot) + '</span><div class="body"><div class="name">' + esc(m.name) + (m.reserved ? ' <small style="color:var(--ok)">· 예약</small>' : '') + '</div>' +
+        (m.menu ? '<div class="menu">' + esc(m.menu) + '</div>' : '') +
+        (m.note ? '<div class="menu">' + esc(m.note) + '</div>' : '') +
+        (acts.length ? '<div class="acts">' + acts.join('') + '</div>' : '') + '</div>' +
+        '<label class="ok"><input type="checkbox" data-store="' + esc(k) + '"' + (on ? ' checked' : '') + '>확정</label></div>';
+    }).join('');
+    return h + '</div>';
+  }
+
+  function renderTicket(sub) {
+    var h = '<h2 class="sec">🎫 티켓</h2><p class="lead">사진을 등록하면 이 휴대폰에만 저장되고 인터넷 없이도 열립니다.</p>';
+    h += (T.tickets || []).map(function (t) {
+      var acts = '';
+      if (t.image) acts += '<button type="button" class="btn primary" data-view="' + esc(t.image) + '" data-title="' + esc(t.title) + '">크게 보기</button>';
+      acts += '<label class="btn"><input class="photo-in" type="file" accept="image/*" data-photo="' + esc(t.id) + '">사진 등록</label>';
+      return '<section class="card" id="tk-' + esc(t.id) + '"' + (sub === t.id ? ' style="border-color:var(--accent)"' : '') + '><h3>' + esc((t.icon ? t.icon + ' ' : '') + t.title) + '</h3>' +
+        (t.meta ? '<p class="lead">' + esc(t.meta) + '</p>' : '') +
+        (t.kv && t.kv.length ? '<dl class="kv">' + t.kv.map(function (p) { return '<dt>' + esc(p[0]) + '</dt><dd>' + esc(p[1]) + '</dd>'; }).join('') + '</dl>' : '') +
+        (t.image ? '<img class="ticket-img" src="' + esc(t.image) + '" alt="' + esc(t.title) + '" loading="lazy">' : '') +
+        '<img class="ticket-img" data-photo-img="' + esc(t.id) + '" alt="' + esc(t.title) + ' 등록 사진" hidden>' +
+        '<div class="acts">' + acts + '</div></section>';
+    }).join('');
+    return h;
+  }
+
+  function renderInfo() {
+    var h = '';
+    var places = T.places || {};
+    var keys = Object.keys(places);
+    if (keys.length) {
+      h += '<h2 class="sec">' + (DOMESTIC ? '📍 주소' : '🚕 택시 주소 카드') + '</h2><div class="card">';
+      h += keys.map(function (k) {
+        var p = places[k];
+        var acts = '<button type="button" class="btn primary" data-addr="' + esc(k) + '">' + (DOMESTIC ? '크게' : '보여주기') + '</button>';
+        if (hasCar) acts += ' <a class="btn" href="' + esc(navUrl(p.map || p.addr_local || p.name)) + '" target="_blank" rel="noopener">길안내</a>';
+        return '<div class="chk place" style="cursor:default"><div><b>' + esc(p.name) + '</b><small>' + esc(p.addr_ko || p.addr_local || '') + '</small></div><div>' + acts + '</div></div>';
+      }).join('') + '</div>';
+    }
+    var I = T.info || {};
+    if ((I.contacts || []).length) {
+      h += '<h2 class="sec">🆘 연락처</h2><div class="card">' + I.contacts.map(function (c) {
+        return '<div class="chk place" style="cursor:default"><div><b>' + esc(c.label) + '</b><small>' + esc(c.note || c.tel) + '</small></div><a class="btn" href="tel:' + esc(String(c.tel).replace(/[^+\d]/g, '')) + '">전화</a></div>';
+      }).join('') + '</div>';
+    }
+    if ((I.phrases || []).length) {
+      h += '<h2 class="sec">💬 회화</h2><div class="card">' + I.phrases.map(function (p) {
+        return '<div class="chk" style="cursor:default;display:block;padding:10px 0"><b>' + esc(p.ko) + '</b><div style="font-size:20px">' + esc(p.local) + '</div>' + (p.pron ? '<small style="color:var(--muted)">' + esc(p.pron) + '</small>' : '') + '</div>';
+      }).join('') + '</div>';
+    }
+    (I.sections || []).forEach(function (s) {
+      h += '<h2 class="sec">' + esc(s.title) + '</h2><div class="card"><ul style="margin:0;padding-left:20px">' + (s.items || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+    });
+    return h || '<p class="empty">정보가 없습니다</p>';
+  }
+
+  function renderCheck(sub) {
+    var C = T.checklist || {};
+    var groups = Object.keys(C);
+    var cur = groups.indexOf(sub) >= 0 ? sub : groups[0];
+    var LB = { items: '필수품', wear: '옷차림', before: '출발 전', during: '여행 중' };
+    var h = '<nav class="subtabs" role="tablist">' + groups.map(function (g) {
+      return '<button type="button" role="tab" data-go="check/' + g + '" aria-selected="' + (g === cur) + '">' + esc(LB[g] || g) + '</button>';
+    }).join('') + '</nav><div class="card">';
+    h += (C[cur] || []).map(function (x, i) {
+      var k = 'chk:' + cur + ':' + i;
+      return '<label class="chk"><input type="checkbox" data-store="' + k + '"' + (store.get(k) === '1' ? ' checked' : '') + '><span>' + esc(x) + '</span></label>';
+    }).join('');
+    return h + '</div>';
+  }
+
+  function renderShop() {
+    return '<h2 class="sec">🛍️ 쇼핑</h2><div class="card">' + (T.shop || []).map(function (s, i) {
+      var k = 'shop:' + i;
+      return '<label class="chk"><input type="checkbox" data-store="' + k + '"' + (store.get(k) === '1' ? ' checked' : '') + '><span><b>' + esc(s.name) + '</b>' + (s.where || s.note ? '<br><small style="color:var(--muted)">' + esc([s.where, s.note].filter(Boolean).join(' · ')) + '</small>' : '') + '</span></label>';
+    }).join('') + '</div>';
+  }
+
+  /* ───── 라우팅 (뒤로가기 지원) ───── */
+  var VIEWS = { plan: renderPlan, meal: renderMeal, ticket: renderTicket, info: renderInfo, check: renderCheck, shop: renderShop };
+  function route() {
+    var parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/');
+    var tab = parts[0], sub = parts[1];
+    var app = $('#app');
+    if (tab === 'home' || !VIEWS[tab]) {
+      document.body.classList.add('home');
+      app.innerHTML = renderHome();
+    } else {
+      document.body.classList.remove('home');
+      app.innerHTML = '<section class="tab">' + VIEWS[tab](sub) + '</section>';
+      Array.prototype.forEach.call(document.querySelectorAll('.tabbar button'), function (b) {
+        if (b.dataset.go === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+      });
+      if (tab === 'ticket') { loadPhotos(); if (sub) { var el = document.getElementById('tk-' + sub); if (el) el.scrollIntoView(); } }
+      if (tab === 'plan') markNow();
+    }
+    if (!(tab === 'ticket' && sub)) window.scrollTo(0, 0);
+  }
+  function go(to) { var h = '#/' + to; if (location.hash === h) route(); else location.hash = h; }
+  window.addEventListener('hashchange', route);
+
+  /* 지금 진행 중인 일정 강조 */
+  function markNow() {
+    var now = Date.now(), evs = document.querySelectorAll('.ev[data-at]'), cur = null;
+    Array.prototype.forEach.call(evs, function (e) {
+      if (!e.dataset.at) return;
+      var t = new Date(e.dataset.at).getTime();
+      if (t <= now) cur = e;
+    });
+    Array.prototype.forEach.call(evs, function (e) {
+      e.classList.remove('now', 'past');
+      if (cur && e !== cur && e.dataset.at && new Date(e.dataset.at).getTime() < new Date(cur.dataset.at).getTime()) e.classList.add('past');
+    });
+    if (cur) { var last = evs[evs.length - 1]; if (cur !== last || now - new Date(cur.dataset.at).getTime() < 3 * 3600e3) cur.classList.add('now'); }
+  }
+  setInterval(function () { if (/^#\/plan/.test(location.hash)) markNow(); }, 60000);
+
+  /* 주소 카드 */
+  function openAddr(k) {
+    var p = (T.places || {})[k]; if (!p) return;
+    var ask = DOMESTIC ? '' : (M.addr_ask || '');
+    $('#addr-show').innerHTML = (ask ? '<p class="ask">' + esc(ask) + '</p>' : '') +
+      '<p class="local">' + esc(p.local || p.name) + '</p>' +
+      (p.addr_local ? '<p class="laddr">' + esc(p.addr_local) + '</p>' : '') +
+      (p.addr_ko && !DOMESTIC ? '<p class="ko">' + esc(p.name) + ' · ' + esc(p.addr_ko) + '</p>' : '') +
+      (p.tel ? '<a class="tel" href="tel:' + esc(String(p.tel).replace(/[^+\d]/g, '')) + '">☎ ' + esc(p.tel) + '</a>' : '');
+    $('#addr-sheet').hidden = false;
+  }
+
+  /* 사진 등록 (IndexedDB, 이 기기에만 저장) */
+  var dbp = null;
+  function db() {
+    if (dbp) return dbp;
+    dbp = new Promise(function (res, rej) {
+      try {
+        var r = indexedDB.open('trip-photos-' + (M.id || 'x'), 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore('p'); };
+        r.onsuccess = function () { res(r.result); };
+        r.onerror = function () { rej(r.error); };
+      } catch (e) { rej(e); }
+    });
+    return dbp;
+  }
+  function putPhoto(id, blob) { return db().then(function (d) { return new Promise(function (res) { var tx = d.transaction('p', 'readwrite'); tx.objectStore('p').put(blob, id); tx.oncomplete = res; }); }); }
+  function getPhoto(id) { return db().then(function (d) { return new Promise(function (res) { var q = d.transaction('p').objectStore('p').get(id); q.onsuccess = function () { res(q.result); }; q.onerror = function () { res(null); }; }); }); }
+  function loadPhotos() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-photo-img]'), function (img) {
+      getPhoto(img.dataset.photoImg).then(function (b) { if (b) { img.src = URL.createObjectURL(b); img.hidden = false; img.dataset.viewSrc = img.src; } }).catch(function () {});
+    });
+  }
+
+  /* 이벤트 위임 */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go],[data-addr],[data-close-addr],[data-view],[data-close-viewer],[data-photo-img]');
+    if (!t) return;
+    if (t.dataset.go != null) { e.preventDefault(); go(t.dataset.go); }
+    else if (t.dataset.addr != null) { e.preventDefault(); openAddr(t.dataset.addr); }
+    else if (t.hasAttribute('data-close-addr')) $('#addr-sheet').hidden = true;
+    else if (t.dataset.view || t.dataset.viewSrc) { $('#viewer-img').src = t.dataset.view || t.dataset.viewSrc; $('#viewer-title').textContent = t.dataset.title || t.alt || ''; $('#viewer').hidden = false; }
+    else if (t.hasAttribute('data-close-viewer')) $('#viewer').hidden = true;
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.dataset.store) store.set(t.dataset.store, t.checked ? '1' : '0');
+    if (t.dataset.photo && t.files && t.files[0]) putPhoto(t.dataset.photo, t.files[0]).then(loadPhotos);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { $('#addr-sheet').hidden = true; $('#viewer').hidden = true; } });
+
+  route();
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('/sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>

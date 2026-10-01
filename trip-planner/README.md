@@ -1,0 +1,28 @@
+# trip-planner — Claude Code 여행 일정표 스킬
+
+장소·동행·코스·국내/해외·이동수단·날짜를 질문으로 받아, 휴대폰용 여행 일정표 앱(오프라인 PWA)을 만들어 주는 Claude Code 스킬입니다.
+
+## 설치
+압축을 풀면 나오는 `trip-planner` 폴더를 아래 위치에 넣으세요.
+
+- macOS / Linux / WSL: `~/.claude/skills/trip-planner/`
+- Windows: `C:\Users\<사용자>\.claude\skills\trip-planner\`
+
+`SKILL.md`가 `~/.claude/skills/trip-planner/SKILL.md` 경로에 있어야 합니다.
+Claude Code를 다시 열면 스킬 목록에 `trip-planner`가 보입니다.
+
+## 사용
+```
+/trip-planner
+/trip-planner 제주 3박4일 부모님이랑 렌터카
+```
+
+## 결과물
+- `<여행폴더>/share/<제목>.html` — 가족에게 카톡으로 보내는 HTML 파일 하나(이미지 포함, 오프라인 열림). 다운로드 폴더에도 자동 복사됩니다.
+- 웹 앱 파일(index.html 등) — 원하면 Vercel 배포
+- 예시: `examples/osaka-sample/`
+
+## 필요한 것
+- Python 3 (앱 생성 스크립트 `scripts/build.py`)
+- Node.js 18+ 와 크롬(선택) — `scripts/verify.mjs` 화면 자동 점검용
+- Pillow(선택) — 앱 아이콘 생성용. 없으면 아이콘만 빠집니다. `pip install pillow`

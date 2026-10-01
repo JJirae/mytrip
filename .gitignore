@@ -1,0 +1,7 @@
+# 작업 기록·캐시
+.omc/
+__pycache__/
+*.pyc
+node_modules/
+.vercel/
+*:Zone.Identifier
