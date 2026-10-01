@@ -1,7 +1,7 @@
 // 오프라인 지원: 설치 시 페이지와 이미지를 받아 두고, 인터넷이 없으면 저장본을 보여 줍니다.
 // build.py가 VERSION과 PRECACHE 목록을 채웁니다. 이미지를 바꾸면 build.py를 다시 실행하세요.
 // 주소는 모두 이 파일 위치 기준 상대경로라 사이트 루트(/)나 여행 폴더(/<여행-id>/) 어디에 두어도 동작합니다.
-var VERSION = 'gyeongju-2026-10@20261001151421';
+var VERSION = 'gyeongju-2026-10@20261001152714';
 var PRECACHE = [
   "./",
   "manifest.webmanifest",

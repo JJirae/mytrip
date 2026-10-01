@@ -29,13 +29,14 @@ argument-hint: "[아는 내용 자유롭게 — 예: 제주 3박4일 부모님�
 **사이트 모드 (여러 여행을 주소 하나로):** 폴더에 `site.json`이 있으면 그 폴더가 사이트다.
 ```
 <사이트폴더>/                 ← git 저장소 · Vercel Root Directory는 비워 둠(저장소 맨 위)
-├── site.json                 ← { "title": "우리 여행", "subtitle": "..." }
-├── index.html                ← 메인 페이지(여행 목록) — build_home.py가 생성
+├── site.json                 ← { "title": "OurTrip", "subtitle": "..." } — 앱 이름이 됨
+├── index.html                ← 메인 페이지(여행 목록 + 앱 설치 버튼) — build_home.py가 생성
+├── manifest.webmanifest, sw.js, icons/ ← 설치형 앱(범위 = 사이트 전체, 아이콘은 template/site-icons)
 ├── vercel.json, .vercelignore ← build_home.py가 생성 (스킬 코드·md·trip.json은 배포 안 함)
 ├── gyeongju-2026-10/         ← 여행 하나 = 폴더 하나 → https://<주소>/gyeongju-2026-10/
 └── osaka-2026-11/
 ```
-여행 폴더에서 `build.py`를 돌리면 메인 페이지가 자동으로 갱신된다. 앱의 경로는 모두 상대경로라 사이트 안(`/<id>/`)에서도, 폴더 단독 배포(`/`)에서도 동작하고, 서비스워커는 여행 폴더 범위로 따로 설치되며 캐시도 여행별로 분리된다.
+여행 폴더에서 `build.py`를 돌리면 메인 페이지가 자동으로 갱신된다. 메인은 설치형 앱(안드로이드는 '앱 설치' 버튼으로 바로 설치, iOS·카톡 브라우저는 안내 화면)이고, 여행 표지에는 '‹ 앱 이름' 돌아가기 링크가 붙는다. 앱의 경로는 모두 상대경로라 사이트 안(`/<id>/`)에서도, 폴더 단독 배포(`/`)에서도 동작하고, 서비스워커는 여행 폴더 범위로 따로 설치되며 캐시도 여행별로 분리된다.
 
 ---
 

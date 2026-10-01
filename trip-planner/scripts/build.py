@@ -253,7 +253,12 @@ def main():
     m = t["meta"]
     accent = m.get("accent") or "#c4442a"
 
-    (out / "index.html").write_text(render(t), encoding="utf-8")
+    # 사이트 모드면 웹 앱 표지에 '‹ 여행 목록' 링크 (공유 파일은 단독으로 열리므로 넣지 않음)
+    web = t
+    if (out.parent / "site.json").is_file():
+        site = json.loads((out.parent / "site.json").read_text(encoding="utf-8"))
+        web = dict(t, site={"title": site.get("title") or "여행 목록", "home": "../"})
+    (out / "index.html").write_text(render(web), encoding="utf-8")
 
     # 경로는 모두 상대경로 — 사이트 루트(/)에 두든 여행 폴더(/<id>/)에 두든 동작
     assets = sorted(p.relative_to(out).as_posix() for p in (out / "assets").rglob("*")

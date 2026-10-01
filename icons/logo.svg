@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3a63"/>
+      <stop offset="1" stop-color="#1a2440"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <!-- 지나온 길(점선) → 목적지 핀. 마스커블 안전 영역(중심 반경 205) 안에 맞춤 -->
+  <path d="M98 300 C 106 412, 208 440, 284 406" fill="none" stroke="#f3f1ec" stroke-opacity=".75"
+        stroke-width="22" stroke-linecap="round" stroke-dasharray="0.1 36"/>
+  <circle cx="98" cy="300" r="19" fill="#f3f1ec"/>
+  <path d="M304 400 C 304 400 212 298 212 214 A 92 92 0 1 1 396 214 C 396 298 304 400 304 400 Z" fill="#e8664a"/>
+  <circle cx="304" cy="214" r="36" fill="#f3f1ec"/>
+</svg>

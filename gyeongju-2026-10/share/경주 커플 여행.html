@@ -42,6 +42,7 @@ body.home .top{display:none}
 /* 표지 */
 .cover{min-height:100svh;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:calc(env(safe-area-inset-top) + 24px) 0 24px}
 .cover-card{background:var(--navy);color:var(--navy-ink);border-radius:20px;padding:28px 22px}
+.site-back{align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 4px;font-size:17px;font-weight:700;color:var(--muted);text-decoration:none}
 .cover-card .kicker{margin:0 0 6px;font-size:15px;opacity:.8;letter-spacing:.04em}
 .cover-card h2{margin:0;font-size:32px;line-height:1.25;font-weight:900;word-break:keep-all}
 .cover-card .dates{margin:10px 0 0;font-size:19px;font-weight:700}
@@ -306,7 +307,10 @@ body.home .tabbar{display:none}
     var s = md(M.start), e = md(M.end);
     var who = (T.travelers || []).map(function (p) { return p.name; }).join(' · ');
     var tid = todayId();
-    var h = '<section class="cover"><div class="cover-card">' +
+    // 사이트 모드(build.py가 T.site를 넣음)면 여행 목록으로 돌아가는 링크 — iOS 앱 모드엔 뒤로가기가 없음
+    var h = '<section class="cover">' +
+      (T.site ? '<a class="site-back" href="' + esc(T.site.home || '../') + '">‹ ' + esc(T.site.title || '여행 목록') + '</a>' : '') +
+      '<div class="cover-card">' +
       '<p class="kicker">' + esc(M.kicker || (DOMESTIC ? '국내 여행' : '해외 여행')) + '</p>' +
       '<h2>' + esc(M.title) + '</h2>' +
       '<p class="dates">' + s.m + '월 ' + s.d + '일(' + s.w + ') ~ ' + e.m + '월 ' + e.d + '일(' + e.w + ')</p>' +
@@ -624,6 +628,7 @@ body.home .tabbar{display:none}
     var label = btn.textContent;
     btn.textContent = '파일 만드는 중…'; btn.disabled = true;
     var T2 = JSON.parse(JSON.stringify(T));
+    delete T2.site;  // 보낸 파일은 단독으로 열리므로 '여행 목록' 링크 제거
     Object.keys(T2.meals).forEach(function (d) { T2.meals[d].forEach(function (m, i) { m.confirmed = mealOn(d, i); }); });
     Promise.all([inlineAssets(T2), allLocal()]).then(function (r) {
       var merged = {};

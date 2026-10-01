@@ -5,7 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#1f2a44">
-<title>우리 여행</title>
+<!-- 설치형 앱: build_home.py가 manifest.webmanifest · sw.js · icons/를 함께 만든다 -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/logo.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OurTrip">
+<title>OurTrip</title>
 <style>
 :root{
   --bg:#f5f2ec; --card:#fff; --ink:#1c1e23; --muted:#5f636c; --line:#e5dfd4;
@@ -18,12 +27,18 @@
   }
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif}
+button{font:inherit;color:inherit}
 .wrap{max-width:640px;margin:0 auto;padding:0 16px}
-header{background:var(--navy);color:var(--navy-ink);padding:calc(env(safe-area-inset-top) + 40px) 0 28px}
-header h1{margin:0;font-size:30px;line-height:1.25;font-weight:900;word-break:keep-all}
-header p{margin:6px 0 0;font-size:16px;opacity:.8}
+header{background:var(--navy);color:var(--navy-ink);padding:calc(env(safe-area-inset-top) + 32px) 0 26px}
+.head{display:flex;align-items:center;gap:14px}
+.logo{flex:none;width:52px;height:52px;border-radius:14px;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+.head-txt{flex:1;min-width:0}
+header h1{margin:0;font-size:30px;line-height:1.2;font-weight:900;word-break:keep-all}
+header p{margin:2px 0 0;font-size:16px;opacity:.8}
+.install{flex:none;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid rgba(255,255,255,.35);background:transparent;font-size:16px;font-weight:700;cursor:pointer}
 main{padding-bottom:calc(32px + env(safe-area-inset-bottom))}
 h2{margin:28px 0 10px;font-size:16px;font-weight:700;color:var(--muted);letter-spacing:.02em}
 .trip{display:flex;align-items:center;gap:14px;margin:0 0 12px;padding:18px 16px 18px 0;background:var(--card);border:1px solid var(--line);border-radius:16px;color:inherit;text-decoration:none;overflow:hidden}
@@ -40,26 +55,46 @@ h2{margin:28px 0 10px;font-size:16px;font-weight:700;color:var(--muted);letter-s
 .status.now{background:var(--ok-soft);color:var(--ok)}
 .trip.past .body{opacity:.75}
 .empty{margin:28px 0;padding:24px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
+/* 설치 안내(iOS·카톡 브라우저) */
+.sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45)}
+.sheet-card{width:100%;max-width:640px;background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px calc(20px + env(safe-area-inset-bottom))}
+.sheet-card h3{margin:0 0 12px;font-size:21px}
+.sheet-card ol{margin:0;padding-left:22px}
+.sheet-card li{margin:6px 0}
+.sheet-card .note{margin:12px 0 0;font-size:15px;color:var(--muted)}
+.sheet-card svg{vertical-align:-4px}
+.ok-btn{display:block;width:100%;min-height:52px;margin-top:18px;border:0;border-radius:14px;background:var(--navy);color:var(--navy-ink);font-size:18px;font-weight:800;cursor:pointer}
 </style>
 </head>
 <body>
-<header><div class="wrap"><h1 id="title"></h1><p id="subtitle"></p></div></header>
+<header><div class="wrap head">
+  <img class="logo" src="icons/logo.svg" alt="">
+  <div class="head-txt"><h1 id="title"></h1><p id="subtitle"></p></div>
+  <button type="button" class="install" id="install" hidden>앱 설치</button>
+</div></header>
 <main class="wrap" id="list"></main>
-<script type="application/json" id="site">{"site": {"title": "우리 여행", "subtitle": "여행 일정표 모음"}, "trips": [{"path": "gyeongju-2026-10/", "title": "경주 커플 여행", "kicker": "2026 가을 · 3박 4일", "start": "2026-10-03", "end": "2026-10-06", "accent": "#c4442a", "destination": "경주 (시내 · 양남 · 감포 · 보문)", "who": "본인 · 연인"}]}</script>
+<div class="sheet" id="guide" hidden><div class="sheet-card" role="dialog" aria-modal="true" aria-labelledby="guide-title">
+  <h3 id="guide-title"></h3><div id="guide-body"></div>
+  <button type="button" class="ok-btn" id="guide-ok">확인</button>
+</div></div>
+<script type="application/json" id="site">{"site": {"title": "OurTrip", "subtitle": "우리 여행 일정표 모음"}, "trips": [{"path": "gyeongju-2026-10/", "title": "경주 커플 여행", "kicker": "2026 가을 · 3박 4일", "start": "2026-10-03", "end": "2026-10-06", "accent": "#c4442a", "destination": "경주 (시내 · 양남 · 감포 · 보문)", "who": "본인 · 연인"}]}</script>
 <script>
 (function () {
   var S = JSON.parse(document.getElementById('site').textContent);
   var site = S.site || {}, trips = S.trips || [];
+  var NAME = site.title || '여행';
   var W = '일월화수목금토', DAY = 864e5;
+  function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function day(s) { var p = String(s || '').split('-'); return p.length === 3 ? new Date(+p[0], p[1] - 1, +p[2]) : null; }
   var now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   function fmt(d) { return (d.getFullYear() !== today.getFullYear() ? d.getFullYear() + '. ' : '') + (d.getMonth() + 1) + '/' + d.getDate() + '(' + W[d.getDay()] + ')'; }
   function gap(a, b) { return Math.round((a - b) / DAY); }
 
-  document.getElementById('title').textContent = site.title || '여행';
-  document.getElementById('subtitle').textContent = site.subtitle || ('일정표 ' + trips.length + '개');
+  $('title').textContent = NAME;
+  $('subtitle').textContent = site.subtitle || ('일정표 ' + trips.length + '개');
 
+  /* ── 여행 목록 ── */
   var soon = [], past = [];
   trips.forEach(function (t) {
     t.s = day(t.start); t.e = day(t.end) || t.s;
@@ -84,11 +119,38 @@ h2{margin:28px 0 10px;font-size:16px;font-weight:700;color:var(--muted);letter-s
       (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') +
       '</div>' + st + '</a>';
   }
-
   var h = '';
   if (soon.length) h += '<h2>다가오는 여행</h2>' + soon.map(card).join('');
   if (past.length) h += '<h2>지난 여행</h2>' + past.map(card).join('');
-  document.getElementById('list').innerHTML = h || '<p class="empty">아직 만든 여행이 없어요</p>';
+  $('list').innerHTML = h || '<p class="empty">아직 만든 여행이 없어요</p>';
+
+  /* ── 앱 설치 ──
+     안드로이드 크롬: beforeinstallprompt로 바로 설치 / iOS: 공유 → 홈 화면에 추가 안내
+     카톡 등 앱 안 브라우저: 설치가 안 되므로 다른 브라우저로 열라고 안내 / 이미 앱이면 버튼 숨김 */
+  var ua = navigator.userAgent;
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var inApp = /KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\//i.test(ua);
+  var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  var deferred = null, btn = $('install');
+  var SHARE = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="공유"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+
+  function guide(title, body) { $('guide-title').textContent = title; $('guide-body').innerHTML = body; $('guide').hidden = false; $('guide-ok').focus(); }
+  $('guide-ok').onclick = function () { $('guide').hidden = true; };
+  $('guide').onclick = function (e) { if (e.target === this) this.hidden = true; };
+
+  if (!standalone && (isIOS || inApp)) btn.hidden = false;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; if (!standalone) btn.hidden = false; });
+  window.addEventListener('appinstalled', function () { deferred = null; btn.hidden = true; });
+  btn.onclick = function () {
+    if (deferred) { deferred.prompt(); deferred.userChoice.then(function () { deferred = null; }); return; }
+    if (inApp) return guide('다른 브라우저로 열어 주세요',
+      '<p>카카오톡 같은 앱 안에서는 설치할 수 없어요.</p><ol><li>오른쪽 아래(또는 위) <b>⋮ / 공유</b> 메뉴에서</li><li><b>' + (isIOS ? 'Safari로 열기' : '다른 브라우저로 열기') + '</b>를 누른 뒤</li><li>다시 <b>앱 설치</b>를 눌러 주세요</li></ol>');
+    guide('홈 화면에 ' + esc(NAME) + ' 추가',
+      '<ol><li>Safari 아래(아이패드는 위) 공유 버튼 ' + SHARE + '을 누르고</li><li><b>홈 화면에 추가</b>를 고른 뒤</li><li>오른쪽 위 <b>추가</b>를 누르세요</li></ol>' +
+      '<p class="note">홈 화면 아이콘으로 열면 앱처럼 전체 화면으로 열리고, 인터넷이 약한 곳에서도 일정표를 볼 수 있어요. 티켓 사진은 홈 화면 앱에서 넣어 주세요.</p>');
+  };
+
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () {});
 })();
 </script>
 </body>
